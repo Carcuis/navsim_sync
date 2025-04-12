@@ -1,0 +1,56 @@
+#!/usr/bin/env bash
+
+DIR=$(dirname $(realpath ${BASH_SOURCE[0]}))
+source $DIR/ns_util.sh
+
+function cmd_parser() {
+    while [[ "$#" -gt 0 ]]; do
+        case "$1" in
+            root | git | exp)
+                target="$1"
+                ;;
+            --delete)
+                delete_flag=true
+                ;;
+            -h | --help)
+                usage
+                exit
+                ;;
+            *)
+                error "Error: Invalid option '$1'."
+                usage
+                exit 1
+                ;;
+        esac
+        shift
+    done
+}
+
+function usage() {
+    bold "Usage:"
+    mesg "  nsl [root|exp|git] [options]"
+    mesg
+    bold "Options:"
+    mesg "  --delete    Force sync with deletion"
+    mesg "  -h, --help  Display help"
+}
+
+function main() {
+    cmd_parser "$@"
+
+    case "$target" in
+        root)
+            run_rsync root $REMOTE $LOCAL "$delete_flag" "'exp','dataset','__pycache__'"
+            ;;
+        exp)
+            run_rsync experiments $REMOTE_EXP $LOCAL_EXP "$delete_flag" "'metric_cache','training_cache'"
+            ;;
+        git)
+            run_rsync .git $REMOTE_GIT $LOCAL_GIT "true"
+            ;;
+    esac
+}
+
+if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
+    main "$@"
+fi

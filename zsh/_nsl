@@ -1,0 +1,22 @@
+#compdef nsl
+
+_contents() {
+    local -a contents=(root git exp)
+    _describe -t contents 'content' contents
+}
+
+_nsl() {
+    integer ret=1
+    local -a args
+
+    args+=(
+        "--delete[Force sync with deletion]"
+        {-h,--help}"[Display help]"
+        '1: :_contents'
+    )
+
+    _arguments $args[@] && ret=0
+    return ret
+}
+
+_nsl

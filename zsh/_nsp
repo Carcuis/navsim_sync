@@ -1,0 +1,22 @@
+#compdef nsp
+
+_contents() {
+    local -a contents=(root git)
+    _describe -t contents 'content' contents
+}
+
+_nsp() {
+    integer ret=1
+    local -a args
+
+    args+=(
+        "--delete[Force sync with deletion]"
+        {-h,--help}"[Display help]"
+        '1: :_contents'
+    )
+
+    _arguments $args[@] && ret=0
+    return ret
+}
+
+_nsp
