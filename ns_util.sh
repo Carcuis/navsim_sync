@@ -28,8 +28,8 @@ function has_file() { [[ -f "$1" ]]; }
 
 function run_rsync() {
     name=$1
-    remote=$2/
-    local=$3/
+    src=$2/
+    dest=$3/
     delete=$4
     exclude=$5
 
@@ -39,13 +39,13 @@ function run_rsync() {
         rsync_cmd+=" --delete"
     fi
 
-    mesg "$motion ${BOLD}$name${TAIL}${WHITE} from ${UNDERLINE}$remote${TAIL}${WHITE} to ${UNDERLINE}$local${TAIL}"
+    mesg "$motion ${BOLD}$name${TAIL}${WHITE} from ${UNDERLINE}$src${TAIL}${WHITE} to ${UNDERLINE}$dest${TAIL}"
 
     if [[ -n $exclude ]]; then
         info "Excluding: $(echo $exclude | sed -E "s/,/, /g")"
         rsync_cmd+=" $(echo $exclude | sed -E "s/,/ --exclude=/g;s/^/--exclude=/;s/'//g")"
     fi
 
-    $rsync_cmd $remote $local
+    $rsync_cmd $src $dest
 }
 
